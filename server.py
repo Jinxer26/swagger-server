@@ -4,7 +4,7 @@ import json
 
 class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
-        if self.path == "../specs":
+        if self.path == "/spec":
             specs = [
                 f for f in os.listdir(".")
                 if f.endswith((".yaml", ".yml", ".json"))
