@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>OpenAPI Directory Browser</title>
+
+  <link rel="stylesheet"
+        href="https://unpkg.com/swagger-ui-dist/swagger-ui.css" />
+
+  <style>
+    body { margin: 0; }
+    #topbar {
+      background: #1b1b1b;
+      color: white;
+      padding: 10px;
+      font-family: sans-serif;
+    }
+    select {
+      margin-left: 10px;
+      padding: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="topbar">
+    OpenAPI Spec:
+    <select id="specSelector"></select>
+  </div>
+
+  <div id="swagger-ui"></div>
+
+  <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-standalone-preset.js"></script>
+
+  <script>
+    let ui;
+
+    fetch("/specs")
+      .then(res => res.json())
+      .then(specs => {
+        const selector = document.getElementById("specSelector");
+
+        specs.forEach((spec, i) => {
+          const opt = document.createElement("option");
+          opt.value = spec;
+          opt.textContent = spec;
+          if (i === 0) opt.selected = true;
+          selector.appendChild(opt);
+        });
+
+        ui = SwaggerUIBundle({
+          url: specs[0],
+          dom_id: "#swagger-ui",
+          presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIStandalonePreset
+          ],
+          layout: "BaseLayout"
+        });
+
+        selector.addEventListener("change", () => {
+          ui.specActions.updateUrl(selector.value);
+          ui.specActions.download();
+        });
+      });
+  </script>
+</body>
+</html>
+
